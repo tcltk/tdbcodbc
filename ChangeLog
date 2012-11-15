@@ -1,3 +1,11 @@
+2012-11-14  Kevin B. Kenny  <kennykb@acm.org>
+
+	* configure.in: Added code so that `make test` can find an
+	* Makefile.in:  uninstalled `tdbc` and load it from the build
+	                directory.
+	* configure:	autoconf-2.68
+		*** ADVANCED THE AUTOCONF VERSION IN USE ***
+
 2012-11-08  Don Porter  <dgp@users.sourceforge.net>
 
 	* configure.in:
@@ -8,7 +16,7 @@
 
 	* generic/odbcStubInit.s: Make some tables "const"
 	* tclconfig/install-sh:   Update to latest TEA
-	* tclconfig/tcl.m4:	
+	* tclconfig/tcl.m4:
 	* configure:		      autoconf-2.59
 
 2012-07-13  Kevin B. Kenny  <kennykb@acm.org>

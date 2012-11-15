@@ -54,8 +54,15 @@ Found configuration for Tcl ${TCL_VERSION}.])
 fi
 TCL_VERSION_REQ=8.6; AC_SUBST(TCL_VERSION_REQ)
 
+#--------------------------------------------------------------------
+# Load the tdbcConfig.sh and prepare to put its paths in the Makefile
+#--------------------------------------------------------------------
+
 TEA_PATH_CONFIG(tdbc)
 TEA_LOAD_CONFIG(tdbc)
+AC_SUBST(TDBC_VERSION)
+AC_SUBST(tdbc_BIN_DIR)
+AC_SUBST(TDBC_LIB_FILE)
 
 # The next bit probably ought to be in TEA_LOAD_CONFIG
 AC_MSG_WARN([Looking for "${tdbc_BIN_DIR}/Makefile"])
