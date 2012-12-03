@@ -31,7 +31,7 @@ if {![info exists env(TDBCODBC_TYPE)] || $env(TDBCODBC_TYPE) eq {default}} {
 
 if {$env(TDBCODBC_TYPE) in {jet sqlserver}} {
     if {$::tcl_platform(platform) ne {windows}} {
-	puts stderr "$env(TDBCODBC_TYPE) testing is available on the\
+	puts "$env(TDBCODBC_TYPE) testing is available on the\
                      Windows platform only"
 	cleanupTests
 	return
@@ -134,7 +134,13 @@ test tdbc::odbc-1.3 {create a connection, failure} {*}{
     -result {1 {TDBC DRIVER_ERROR IM002 ODBC *}}
 }
 
+
+tcltest::testConstraint connect \
+    [expr {[catch {tdbc::odbc::connection create ::db $::connStr}] == 0}]
+catch {rename ::db {}}
+
 test tdbc::odbc-1.4 {create a connection, successful} {*}{
+    -constraints connect
     -body {
 	tdbc::odbc::connection create ::db $::connStr
     }
@@ -148,6 +154,11 @@ test tdbc::odbc-1.4 {create a connection, successful} {*}{
 #
 # The tests that follow all require a connection to a database.
 
+if {![tcltest::testConstraint connect]} {
+    puts "tests requiring a db connection skipped."
+    cleanupTests
+    return
+}
 tdbc::odbc::connection create ::db $::connStr
 catch {::db allrows {DROP TABLE people}}
 
