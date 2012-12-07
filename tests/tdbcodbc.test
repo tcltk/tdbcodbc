@@ -33,6 +33,7 @@ if {$env(TDBCODBC_TYPE) in {jet sqlserver}} {
     if {$::tcl_platform(platform) ne {windows}} {
 	puts "$env(TDBCODBC_TYPE) testing is available on the\
                      Windows platform only"
+	removeDirectory tdbctest
 	cleanupTests
 	return
     }
@@ -156,6 +157,7 @@ test tdbc::odbc-1.4 {create a connection, successful} {*}{
 
 if {![tcltest::testConstraint connect]} {
     puts "tests requiring a db connection skipped."
+    removeDirectory tdbctest
     cleanupTests
     return
 }
@@ -3894,7 +3896,7 @@ puts [info class instances tdbc::resultset]
 if {[info exists testFileName]} {
     catch {removeFile $testFileName $testdir}
 }
-catch {removeDirectory tdbctest}
+removeDirectory tdbctest
 
 cleanupTests
 return
