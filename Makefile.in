@@ -366,6 +366,10 @@ dist: dist-clean
 		$(srcdir)/tests/test.mdb \
 		$(DIST_DIR)/tests/
 
+	mkdir $(DIST_DIR)/win
+	cp -p $(srcdir)/win/makefile.vc $(srcdir)/win/nmakehlp.c \
+		$(srcdir)/win/rules.vc $(DIST_DIR)/win/
+
 	(cd $(DIST_ROOT); $(COMPRESS);)
 
 #========================================================================
