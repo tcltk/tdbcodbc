@@ -4,7 +4,7 @@
  *	Stubs tables for the foreign ODBC libraries so that
  *	Tcl extensions can use them without the linker's knowing about them.
  *
- * @CREATED@ 2011-01-22 20:11:52Z by genExtStubs.tcl from ../generic/odbcStubDefs.txt
+ * @CREATED@ 2013-01-15 10:22:09Z by genExtStubs.tcl from ./odbcStubDefs.txt
  *
  * Copyright (c) 2010 by Kevin B. Kenny.
  *
@@ -75,6 +75,7 @@ static const char *const odbcSymbolNames[] = {
     "SQLSetConnectOption",
     "SQLSetEnvAttr",
     "SQLTablesW",
+    "SQLExecDirectW",
     NULL
     /* @END@ */
 };
