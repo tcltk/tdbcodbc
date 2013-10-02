@@ -635,6 +635,7 @@ EGREP
 GREP
 RANLIB
 SET_MAKE
+INSTALL
 CPP
 tdbc_LIBRARY_PATH
 TDBC_LIB_FILE
@@ -4616,6 +4617,9 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+    INSTALL="\$(SHELL) \$(srcdir)/tclconfig/install-sh -c"
+
+
     #--------------------------------------------------------------------
     # Checks to see if the make program sets the $MAKE variable.
     #--------------------------------------------------------------------
@@ -7740,9 +7744,10 @@ fi
 	OpenBSD-*)
 	    arch=`arch -s`
 	    case "$arch" in
-	    m88k|vax)
+	    vax)
 		SHLIB_SUFFIX=""
 		SHARED_LIB_SUFFIX=""
+		LDFLAGS=""
 		;;
 	    *)
 		SHLIB_CFLAGS="-fPIC"
@@ -7754,48 +7759,17 @@ fi
 fi
 		LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.${SHLIB_VERSION}'
+		LDFLAGS="-Wl,-export-dynamic"
 		;;
 	    esac
 	    case "$arch" in
-	    m88k|vax)
+	    vax)
 		CFLAGS_OPTIMIZE="-O1"
 		;;
 	    *)
 		CFLAGS_OPTIMIZE="-O2"
 		;;
 	    esac
-	    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ELF" >&5
-$as_echo_n "checking for ELF... " >&6; }
-if ${tcl_cv_ld_elf+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-		cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#ifdef __ELF__
-	yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "yes" >/dev/null 2>&1; then :
-  tcl_cv_ld_elf=yes
-else
-  tcl_cv_ld_elf=no
-fi
-rm -f conftest*
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $tcl_cv_ld_elf" >&5
-$as_echo "$tcl_cv_ld_elf" >&6; }
-	    if test $tcl_cv_ld_elf = yes; then :
-
-		LDFLAGS=-Wl,-export-dynamic
-
-else
-  LDFLAGS=""
-fi
 	    if test "${TCL_THREADS}" = "1"; then :
 
 		# On OpenBSD:	Compile with -pthread
@@ -7848,7 +7822,7 @@ fi
 		LDFLAGS="$LDFLAGS $PTHREAD_LIBS"
 fi
 	    # Version numbers are dot-stripped by system policy.
-	    TCL_TRIM_DOTS=`echo ${VERSION} | tr -d .`
+	    TCL_TRIM_DOTS=`echo ${PACKAGE_VERSION} | tr -d .`
 	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
 	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1'
 	    TCL_LIB_VERSIONS_OK=nodots
@@ -8487,7 +8461,7 @@ fi
     UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
 fi
 
-    if test "${GCC}" = "yes" ; then
+    if test "${GCC}" = "yes" -a ${SHLIB_SUFFIX} = ".dll"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SEH support in compiler" >&5
 $as_echo_n "checking for SEH support in compiler... " >&6; }
 if ${tcl_cv_seh+:} false; then :
@@ -8499,9 +8473,9 @@ else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-	    #define WIN32_LEAN_AND_MEAN
-	    #include <windows.h>
-	    #undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 	    int main(int argc, char** argv) {
 		int a, b = 0;
@@ -8590,10 +8564,10 @@ else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-		#define VOID void
-		#define WIN32_LEAN_AND_MEAN
-		#include <windows.h>
-		#undef WIN32_LEAN_AND_MEAN
+#define VOID void
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 int
 main ()
@@ -8622,6 +8596,7 @@ $as_echo "$tcl_cv_winnt_ignore_void" >&6; }
 $as_echo "#define HAVE_WINNT_IGNORE_VOID 1" >>confdefs.h
 
 	fi
+    fi
 
 	# See if the compiler supports casting to a union type.
 	# This is used to stop gcc from printing a compiler
@@ -8661,7 +8636,6 @@ $as_echo "$tcl_cv_cast_to_union" >&6; }
 $as_echo "#define HAVE_CAST_TO_UNION 1" >>confdefs.h
 
 	fi
-    fi
 
 
 
@@ -9141,10 +9115,10 @@ rm -f conftest*
 	if test "${SHARED_BUILD}" = "1" ; then
 	    # We force the unresolved linking of symbols that are really in
 	    # the private libraries of Tcl and Tk.
-	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}`\""
 	    if test x"${TK_BIN_DIR}" != x ; then
 		SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TK_BIN_DIR}/${TK_STUB_LIB_FILE}`\""
 	    fi
+	    SHLIB_LD_LIBS="${SHLIB_LD_LIBS} \"`${CYGPATH} ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}`\" -static-libgcc"
 	    eval eval "PKG_LIB_FILE=${PACKAGE_NAME}${SHARED_LIB_SUFFIX}"
 	else
 	    eval eval "PKG_LIB_FILE=${PACKAGE_NAME}${UNSHARED_LIB_SUFFIX}"
