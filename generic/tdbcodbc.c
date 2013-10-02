@@ -5190,7 +5190,7 @@ Tdbcodbc_Init(
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 	return TCL_ERROR;
     }
-    if (Tcl_OOInitStubs(interp) == NULL) {
+    if (TclOOInitializeStubs(interp, "1.0") == NULL) {
 	return TCL_ERROR;
     }
     if (Tdbc_InitStubs(interp) == NULL) {
